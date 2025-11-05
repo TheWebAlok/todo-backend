@@ -15,7 +15,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000", // Local frontend
-      "https://your-frontend-name.vercel.app", // Replace with your deployed frontend URL
+      "https://toto-frontend.vercel.app/", // Replace with your deployed frontend URL
     ],
     credentials: true,
   })
