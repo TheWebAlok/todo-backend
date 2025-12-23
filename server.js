@@ -15,7 +15,7 @@ const allowedOrigins = [
   "https://toto-frontend.vercel.app",
 ];
 
-/* ================= CORS ================= */
+//CORS 
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -33,13 +33,11 @@ app.use(
   })
 );
 
-// 🔥 THIS LINE FIXES YOUR ERROR
-app.options("*", cors());
 
-/* ================= MIDDLEWARE ================= */
+//MIDDLEWARE 
 app.use(express.json());
 
-/* ================= ROUTES ================= */
+//ROUTES 
 app.get("/", (req, res) => {
   res.status(200).send("Todo Backend is running successfully!");
 });
@@ -47,10 +45,10 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/todos", todoRoutes);
 
-/* ================= DB ================= */
+//DB 
 dbConnect();
 
-/* ================= LOCAL SERVER ================= */
+//LOCAL SERVER 
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
@@ -58,5 +56,5 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-/* ================= VERCEL EXPORT ================= */
+//VERCEL EXPORT 
 export default app;
