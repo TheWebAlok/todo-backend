@@ -11,20 +11,27 @@ dotenv.config();
 const app = express();
 
 // CORS setup
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://toto-frontend.vercel.app",
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://toto-frontend.vercel.app",
-    ],
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
 
+// Handle preflight requests for all routes
+app.options("*", cors());
+
 // JSON parsing
 app.use(express.json());
 
-// Root route
+// Root route for testing
 app.get("/", (req, res) => {
   res.send("Todo Backend is running successfully!");
 });
@@ -46,5 +53,5 @@ if (process.env.NODE_ENV === "development") {
   );
 }
 
-// Vercel serverless export
+// Export for Vercel serverless
 export default app;
