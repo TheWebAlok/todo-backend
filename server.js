@@ -10,7 +10,6 @@ dotenv.config();
 
 const app = express();
 
-// CORS setup
 const allowedOrigins = [
   "http://localhost:3000",
   "https://toto-frontend.vercel.app",
@@ -18,33 +17,52 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: allowedOrigins,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
 
-// JSON parsing
+
+
+  //  MIDDLEWARES
+
 app.use(express.json());
 
-// Root route
+
+  //  ROUTES
+
 app.get("/", (req, res) => {
-  res.send("Todo Backend is running successfully!");
+  res.status(200).send("Todo Backend is running successfully!");
 });
 
-// API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/todos", todoRoutes);
 
-// MongoDB connection
+
+  //  DB CONNECTION
+
 dbConnect();
 
-// Local development listener
-if (process.env.NODE_ENV === "development") {
-  app.listen(process.env.PORT || 5000, () =>
-    console.log(`Server running on port ${process.env.PORT || 5000}`)
-  );
+
+  //  LOCAL SERVER
+
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 }
+
+
+  //  VERCEL EXPORT
 
 export default app;
