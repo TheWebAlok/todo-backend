@@ -10,12 +10,11 @@ dotenv.config();
 
 const app = express();
 
-// Allow both localhost (development) and your frontend (production)
 app.use(
   cors({
     origin: [
-      "http://localhost:3000", // Local frontend
-      "https://toto-frontend.vercel.app", // Replace with your deployed frontend URL
+      "http://localhost:3000",
+      "https://toto-frontend.vercel.app",
     ],
     credentials: true,
   })
@@ -23,7 +22,7 @@ app.use(
 
 app.use(express.json());
 
-// Root route for testing (Vercel /)
+// Root route for testing
 app.get("/", (req, res) => {
   res.send("Todo Backend is running successfully!");
 });
@@ -32,13 +31,11 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/todos", todoRoutes);
 
-// Database connection
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URL)
   .then(() => {
     console.log("MongoDB Connected");
 
-    // On Vercel, we don’t use app.listen (handled automatically)
     if (process.env.NODE_ENV !== "production") {
       app.listen(process.env.PORT || 5000, () =>
         console.log("Server running on Port", process.env.PORT || 5000)
@@ -47,5 +44,4 @@ mongoose
   })
   .catch((err) => console.error("MongoDB Connection Error:", err));
 
-// Export app for Vercel
 export default app;
