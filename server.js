@@ -1,10 +1,10 @@
 import express from "express";
-import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 
 import authRoutes from "./routes/authRoutes.js";
 import todoRoutes from "./routes/todoRoutes.js";
+import dbConnect from "./utils/dbConnect.js";
 
 dotenv.config();
 
@@ -25,13 +25,10 @@ app.use(
   })
 );
 
-// Handle preflight requests for all routes
-app.options("*", cors());
-
 // JSON parsing
 app.use(express.json());
 
-// Root route for testing
+// Root route
 app.get("/", (req, res) => {
   res.send("Todo Backend is running successfully!");
 });
@@ -41,10 +38,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/todos", todoRoutes);
 
 // MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.error("MongoDB Connection Error:", err));
+dbConnect();
 
 // Local development listener
 if (process.env.NODE_ENV === "development") {
@@ -53,5 +47,4 @@ if (process.env.NODE_ENV === "development") {
   );
 }
 
-// Export for Vercel serverless
 export default app;
