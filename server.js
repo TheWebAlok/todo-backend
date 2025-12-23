@@ -10,6 +10,7 @@ dotenv.config();
 
 const app = express();
 
+// CORS setup
 app.use(
   cors({
     origin: [
@@ -20,9 +21,10 @@ app.use(
   })
 );
 
+// JSON parsing
 app.use(express.json());
 
-// Root route for testing
+// Root route
 app.get("/", (req, res) => {
   res.send("Todo Backend is running successfully!");
 });
@@ -31,17 +33,18 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/todos", todoRoutes);
 
+// MongoDB connection
 mongoose
   .connect(process.env.MONGO_URL)
-  .then(() => {
-    console.log("MongoDB Connected");
-
-    if (process.env.NODE_ENV !== "production") {
-      app.listen(process.env.PORT || 5000, () =>
-        console.log("Server running on Port", process.env.PORT || 5000)
-      );
-    }
-  })
+  .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB Connection Error:", err));
 
+// Local development listener
+if (process.env.NODE_ENV === "development") {
+  app.listen(process.env.PORT || 5000, () =>
+    console.log(`Server running on port ${process.env.PORT || 5000}`)
+  );
+}
+
+// Vercel serverless export
 export default app;
